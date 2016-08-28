@@ -15,7 +15,8 @@
 
 <style>
     @import 'https://fonts.googleapis.com/css?family=Open+Sans';
-    @import './style/tooltip.css'
+    @import './style/tooltip.css';
+    @import '../node_modules/sweetalert/dist/sweetalert.css';
 </style>
 <style lang="scss">
     @import "../node_modules/bootswatch-scss/flatly/_variables";

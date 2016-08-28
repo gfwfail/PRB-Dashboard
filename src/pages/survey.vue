@@ -2,7 +2,7 @@
      <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">Survey
-<button class="pull-right btn btn-success"  data-balloon="Click here to create a survey" data-balloon-pos="left"><i class="fa fa-plus"></i> Create a Survey</button>
+<a class="pull-right btn btn-success" v-link="{path:'/app/survey/create'}" data-balloon="Click here to create a survey" data-balloon-pos="left"><i class="fa fa-plus"></i> Create a Survey</a>
 
                         </h1>
 
@@ -31,7 +31,7 @@
             <button class="btn btn-sm btn-primary" >Share</button>
                         <button class="btn btn-sm btn-primary">Report</button>
 
-            <button class="btn btn-sm btn-danger"  data-balloon="This action is unrecoverable!!" data-balloon-pos="down" >Delete</button>
+            <button class="btn btn-sm btn-danger" data-balloon="This action is unrecoverable!!" data-balloon-pos="down" >Delete</button>
             
         </td>
         
