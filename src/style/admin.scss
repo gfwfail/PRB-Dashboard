@@ -246,3 +246,13 @@ input#title {
     -khtml-user-drag: element;
     -webkit-user-drag: element;
 }
+
+.badge {
+    background: transparent;
+    color: #C9CBD0;
+    border: solid 1px #C9CBD0;
+    font-size: 9px;
+    padding: 4px 10px 4px 10px;
+    border-radius: 20px;
+    opacity:0.8;
+}

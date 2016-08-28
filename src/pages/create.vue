@@ -18,7 +18,7 @@
             <ul class="nav nav-pills nav-stacked">
                 <li v-for="section in survey.sections"  @mouseover="mouseHover=$index" @mouseout="mouseHover=-1"  track-by="$index" :class="{'active':currentSection==section}">
                     <a @click.self="currentSection=section">
-                    {{section.name}}
+                    {{section.name}} <span class="badge" v-show="section.questions&&section.questions.length>0">{{section.questions?section.questions.length:0}}</span>
 
                     </a>
                             <button style="position:absolute;top:40%;right:3px;" transition="fade" @click.prevent="removeSection(section)" v-show="mouseHover==$index" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></button>
