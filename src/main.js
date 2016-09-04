@@ -15,6 +15,7 @@ Vue.use(require('vue-moment'))
 
 Vue.use(require('vue-drag-and-drop'))
 Vue.use(require('vue-animated-list'))
+Vue.use(require('vue-resource'))
 
 
 
@@ -26,6 +27,8 @@ window.G2 = G2
 
 require('script!../node_modules/sweetalert/dist/sweetalert.min.js')
 require('script!../node_modules/jquery/jquery.min.js')
+require('script!../node_modules/jquery-sticky/jquery.sticky.js')
+
 
 
 

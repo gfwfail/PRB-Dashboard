@@ -18,9 +18,7 @@
                 }
             },
             ready() {
-                if (!this.section.questions) {
-                    this.section.questions = []
-                }
+
             },
             methods: {
                 setType(t) {
@@ -28,6 +26,7 @@
                         description: 'New question #' + (parseInt(this.section.questions.length) + 1),
                         type: t
                     }
+
                     this.section.questions.push(newQuestion)
                     this.callback()
                 }
