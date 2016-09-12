@@ -1,14 +1,35 @@
 <template>
   <div id="app">
+   <loading :loading="loading" :msg="msg" >
+</loading>
   <router-view></router-view>
   </div>
 </template>
 
 <script>
+    import loading from './components/loading.vue'
+
+
     export default {
         replace: false,
         components: {
-
+            loading
+        },
+        data() {
+            return {
+                loading: false,
+                msg: ''
+            }
+        },
+        events: {
+            'loading': function(msg) {
+                this.loading = true
+                this.msg = msg
+            },
+            'loaded': function() {
+                this.loading = false
+                this.msg = ''
+            }
         }
     }
 </script>
@@ -16,6 +37,7 @@
 <style>
     @import 'https://fonts.googleapis.com/css?family=Open+Sans';
     @import './style/tooltip.css';
+    @import './style/loading.css';
     @import '../node_modules/sweetalert/dist/sweetalert.css';
 </style>
 <style lang="scss">

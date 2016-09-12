@@ -44,6 +44,7 @@ body {
 
 .nav-top {
     margin: 20px 0 20px 0;
+    height: 4rem;
     & li {
         float: left;
         margin-right: 1.5rem;
@@ -57,13 +58,14 @@ body {
             }
             font-size: 1.4rem;
             font-weight: bold;
-            transition: color 0.4s ease;
+            transition: all 0.4s ease;
             background: transparent;
             color: lighten($body-bg,
             30%);
             &:hover,
             &:focus {
                 color: white;
+                font-size: 1.6rem;
                 background: transparent;
             }
         }
@@ -90,6 +92,10 @@ body {
     box-shadow: 0 1px 0 rgba(0, 0, 0, .15);
     border-radius: 3px;
     outline: 0 !important;
+    &.active {
+        background: darken(#75A6D3, 10%);
+        border: solid 1px #75A6D3;
+    }
 }
 
 .btn-primary:hover {
@@ -164,7 +170,7 @@ input#title {
         padding-top: 2px;
         &.active {
             & a {
-                background: #fafafa;
+                background: #f1f1f1;
                 color: #77B0E4;
                 &:hover {
                     background: #fafafa;
@@ -200,11 +206,28 @@ input#title {
 .question {
     border: solid 1px #fff;
     border-left: solid 4px #fff;
+    margin: 10px;
     transition: all 0.2s ease;
     &:hover {
         border: solid 1px lighten(#75A6D3, 20%);
         border-left: solid 4px lighten(#75A6D3, 20%);
     }
+}
+
+.options {
+    border-radius: 0;
+    border: none;
+    border-bottom: solid 3px lighten(#75A6D3, 30%);
+    &:hover {
+        border-bottom: solid 3px #75A6D3;
+    }
+}
+
+.newoption {
+    border-radius: 0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
 }
 
 .focused,
@@ -255,4 +278,102 @@ input#title {
     padding: 4px 10px 4px 10px;
     border-radius: 20px;
     opacity: 0.8;
+}
+
+
+/* always present */
+
+.expand-transition {
+    transition: all .2s ease;
+    max-height: 100000px;
+    padding: 10px;
+    z-index: 999999;
+}
+
+
+/* .expand-enter defines the starting state for entering */
+
+
+/* .expand-leave defines the ending state for leaving */
+
+.expand-enter {
+    height: 0;
+    padding: 0 10px;
+    opacity: 0;
+}
+
+.expand-leave {
+    height: 0;
+    padding: 0 10px;
+    overflow: hidden;
+    opacity: 0;
+}
+
+#loader-wrapper {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    transition: all 1s ease;
+    text-align: center;
+}
+
+.loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -30px;
+}
+
+.sweet-alert h2 {
+    font-size: 22px;
+}
+
+a {
+    text-decoration: none !important;
+    color: $body-bg;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.428571429;
+    border-radius: 15px;
+    border-color: transparent;
+}
+
+.btn-circle.btn-lg {
+    margin-top: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 12px;
+    line-height: 1.33;
+    border-radius: 25px;
+    box-shadow: none;
+}
+
+.arrow_box {
+    position: relative;
+    background: #d5d5d5;
+}
+
+.arrow_box:after {
+    right: 100%;
+    top: 45px;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-color: rgba(213, 213, 213, 0);
+    border-right-color: #fafafa;
+    border-width: 6px;
+    margin-top: -6px;
 }

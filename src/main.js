@@ -7,6 +7,8 @@ import Container from './pages/container.vue'
 import Dashboard from './pages/dashboard.vue'
 import Survey from './pages/survey.vue'
 import CreateSurvey from './pages/create.vue'
+import SurveyReport from './pages/report.vue'
+import EditSurvey from './pages/edit.vue'
 
 Vue.use(Router)
 Vue.use(Resource)
@@ -15,7 +17,8 @@ Vue.use(require('vue-moment'))
 
 Vue.use(require('vue-drag-and-drop'))
 Vue.use(require('vue-animated-list'))
-Vue.use(require('vue-resource'))
+
+
 
 
 
@@ -24,7 +27,8 @@ var G2 = require('g2')
 window.G2 = G2
 
 
-
+var Chart = require('chart.js')
+window.Chart = Chart
 require('script!../node_modules/sweetalert/dist/sweetalert.min.js')
 require('script!../node_modules/jquery/jquery.min.js')
 require('script!../node_modules/jquery-sticky/jquery.sticky.js')
@@ -51,6 +55,12 @@ router.map({
             },
             '/survey/create': {
                 component: CreateSurvey
+            },
+            '/survey/report/:id': {
+                component: SurveyReport
+            },
+            '/survey/edit/:id': {
+                component: EditSurvey
             },
         }
     }

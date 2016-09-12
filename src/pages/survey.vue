@@ -10,40 +10,99 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
+                        <div class="btn-group" role="group" >
+  <button type="button" class="btn btn-sm btn-primary" v-for="status in allStatus" @click="filterStatus=$index" :class="{'active':$index==filterStatus}" track-by="$index">{{status}}</button>
+
+
+</div>
+<hr>
                         <table class="table table-hover table-striped">
     <thead>
       <tr>
         <th width="10%">ID #</th>
-        <th width="30%">Name</th>
+        <th>Name</th>
                 <th width="10%">Done</th>
+                 <th>Start at</th>
+                   <th>End at</th>
         <th>Created at</th>
-<th width="30%" class="text-right">Action</th>
+<th  class="text-right">Action</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="i in 10">
-        <td>{{i+1}}</td>
-        <td>Doe</td>
+      <tr v-for="survey in filteredSurveys" track-by="$index">
+        <td>{{survey.id}}</td>
+        <td> <a href="http://www.hrv.dev/{{survey.slug}}" target="_blank"> {{survey.name}}<br> <small class="text-muted">{{survey.slug}}</small>
+        </a></td>
         <td>{{parseInt(Math.random()*100)}}</td>
-        <td> {{new Date()| moment "from" "now" true}}</td>
+        <td> {{survey.start_at}}</td>
+        <td> {{survey.end_at}}</td>
+        <td> {{survey.created_at| moment "from" "now" true}}</td>
         <td align="right"> 
 
-            <button class="btn btn-sm btn-primary" >Share</button>
-                        <button class="btn btn-sm btn-primary">Report</button>
+            <button class="btn btn-sm btn-primary"  v-link="{ path :'/app/survey/edit/'+survey.id}">Edit</button>
+                        <a class="btn btn-sm btn-primary" v-link="{ path :'/app/survey/report/'+survey.id}">Report</a>
 
             <button class="btn btn-sm btn-danger" data-balloon="This action is unrecoverable!!" data-balloon-pos="down" >Delete</button>
             
         </td>
         
       </tr>
+   
       
     </tbody>
   </table>
+     <div v-if="filteredSurveys.length == 0">
+  <p>Sorry, no survey matched.</p>
+        </div>
                     </div>
                 </div>
 </template>
 <script>
-    export default {
+    import {
+        SurveyResource
+    } from '../config.js'
 
+    export default {
+        data() {
+                return {
+                    surveys: null,
+                    filterStatus: 0,
+                    allStatus: ['All', 'Not started', 'In progress', 'Expired']
+                }
+            },
+            ready() {
+                var self = this
+                self.$dispatch('loading', 'Loading')
+                SurveyResource.get().then((res) => {
+                    self.surveys = res.data
+                    self.$dispatch('loaded')
+
+                }, (err) => {
+                    self.$dispatch('loaded')
+
+                })
+            },
+            computed: {
+                filteredSurveys: function() {
+                    return this.$options.filters.filterBy(this.surveys, this.userFilter);
+                }
+            },
+            methods: {
+                userFilter(val) {
+                    if (this.filterStatus == 0) {
+                        return true
+                    }
+                    if (this.filterStatus == 1) {
+                        return val.status == -1
+                    }
+                    if (this.filterStatus == 2) {
+                        return val.status == 0
+                    }
+                    if (this.filterStatus == 3) {
+                        return val.status == 1
+                    }
+
+                }
+            }
     }
 </script>

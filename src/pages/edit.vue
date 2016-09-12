@@ -53,16 +53,6 @@
                                    <access-control :type.sync="survey.access"></access-control>
                          </div>
                       </div>
-<div class="row" v-show="advanced_setting&&(survey.access==1)" transition="fade">
-    <div class="col-md-3 col-md-offset-6">
-        <input type="text" class="form-control" v-model="survey.security_question" placeholder="Security Question">
-    </div>
-    <div class="col-md-3">
-                <input type="text" class="form-control" v-model="survey.security_answer" placeholder="Security Answer">
-
-    </div>
-</div>
-
                       <hr v-show="advanced_setting">
     <div class="row">
         <div class="col-md-3">
@@ -200,13 +190,31 @@
 
     export default {
         ready() {
-                this.reset()
-                $("#sticky-area").sticky({
-                    topSpacing: 0,
-                    zIndex: 99999
-                });
 
-                $('#survey-name').focus()
+                var id = this.$route.params.id
+
+                var self = this
+                self.$dispatch('loading', 'Loading')
+                SurveyResource.get({
+                    'id': id
+                }).then((res) => {
+                    self.survey.name = res.data.name
+                    self.survey.sections = res.data.survey
+                    self.$dispatch('loaded')
+                    this.reset()
+                    $("#sticky-area").sticky({
+                        topSpacing: 0,
+                        zIndex: 99999
+                    });
+
+                    $('#survey-name').focus()
+
+                }, (err) => {
+                    self.$dispatch('loaded')
+
+                })
+
+
 
             },
             components: {
@@ -252,7 +260,7 @@
                             self.$dispatch('loaded')
                             swal({
                                 title: "Survey Created!",
-                                text: `<img src="http://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=https://149.144.133.136:8888/${res.data.slug}"&chld=H|0"> <br> Survey URL: <input type="text" style="display:initial" class="form-class input-sm" value="http://www.hrv.dev:8888/${res.data.slug}" readonly>`,
+                                text: `<img src="http://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=https://www.hrv.dev/${res.data.slug}"&chld=H|0"> <br> Survey URL: <input type="text" style="display:initial" class="form-class input-sm" value="http://www.hrv.dev/${res.data.slug}" readonly>`,
                                 type: 'success',
                                 html: true,
                                 cancelButtonText: 'Close',
@@ -398,18 +406,18 @@
                         sections: [{
                             'name': 'Value exploration: Strategy',
                             'questions': [{
-                                    'description': 'The baord is heavily involved in formulating strategy',
+                                    'description': 'who is your daddy?',
                                     'type': 'TrueFalse',
                                     'options': [],
                                     'multiple': false
                                 }, {
-                                    'description': 'The board monitors strategy execution or implementation against pre determinded milestones, strategic plan and other businessplan',
+                                    'description': 'who is your mummy?',
                                     'type': 'TrueFalse',
                                     'options': [],
                                     'multiple': false
                                 }, {
-                                    'description': 'THe board takes decisions considering the community, employees, society as a whole and the environment',
-                                    'type': 'Slider',
+                                    'description': 'who is your daddy?',
+                                    'type': 'TrueFalse',
                                     'options': [],
                                     'multiple': false
                                 }

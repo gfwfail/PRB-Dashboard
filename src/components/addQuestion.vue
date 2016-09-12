@@ -1,6 +1,6 @@
 <template>
    <div style="position: relative;display: inline-block;vertical-align: middle;">
-                                                      <button @mousedown="show=!show" @blur="show=false" class="btn btn-primary"><i class="fa fa-plus"></i> Add Question  <span class="caret"></span> </button>
+                                                      <button @mousedown="show=!show" class="btn btn-primary"><i class="fa fa-plus"></i> Add Question  <span class="caret"></span> </button>
         <ul transition="fade" v-if="show" class="dropdown-menu" style="display:block">
                     <li><a @click="setType('TrueFalse')">True/False</a></li>
                     <li><a  @click="setType('Slider')">Slider</a></li> 
@@ -24,9 +24,11 @@
                 setType(t) {
                     var newQuestion = {
                         description: 'New question #' + (parseInt(this.section.questions.length) + 1),
-                        type: t
+                        type: t,
+                        options: [],
+                        multiple: false
                     }
-
+                    this.show = false
                     this.section.questions.push(newQuestion)
                     this.callback()
                 }
