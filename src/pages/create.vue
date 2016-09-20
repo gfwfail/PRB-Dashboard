@@ -1,7 +1,6 @@
 <template>
 
 
-
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">New survey</h1>
@@ -14,56 +13,59 @@
 
             <button class="btn btn-primary" @click="addSection()"><i class="fa fa-plus"></i> Add Section</button>
         </div>
-                <div class="col-md-6">
-                      <input placeholder="Name of this survey" id="survey-name" class="form-control"   v-model="survey.name"> 
-                    
-                   <span class="pull-right small"> <a @click="advanced_setting=!advanced_setting" href="javascript:void(0)" class="text-primary"><i class="fa " :class="{'fa-caret-up':!advanced_setting,'fa-caret-down':advanced_setting}"></i> Advanced Setting</a></span>
-                </div>
+        <div class="col-md-6">
+            <input placeholder="Name of this survey" id="survey-name" class="form-control" v-model="survey.name">
+
+            <span class="pull-right small"> <a @click="advanced_setting=!advanced_setting" href="javascript:void(0)"
+                                               class="text-primary"><i class="fa "
+                                                                       :class="{'fa-caret-up':!advanced_setting,'fa-caret-down':advanced_setting}"></i> Advanced Setting</a></span>
+        </div>
         <div class="col-md-3">
-                                      
+
             <a class="pull-right btn btn-success" @click="saveSurvey()"><i class="fa fa-save"></i> Save</a>
-           
+
         </div>
     </div>
 
-<hr>
-   <div class="row" v-show="advanced_setting" transition="expand">
-                        
-                           <div class="col-md-3 text-center">
-                               <label for="">
-                                     Start Date 
-                               </label>
-                         <datepicker :value.sync="survey.start_at" width="120px" :disabled-days-of-week="disabled" format="dd/MM/yyyy" >
-</datepicker>
-                          </div>
-                        
-                           <div class="col-md-3 text-center">
-                                <label for="">
-                                     End Date 
-                               </label>
-                                <datepicker :value.sync="survey.end_at"  width="120px" :disabled-days-of-week="disabled" format="dd/MM/yyyy" >
-</datepicker>
-                          </div>
-                          
-                           <div class="col-md-2 text-center">
-                            <span :class="{'text-danger':period<=0}" id="days"> {{period}} days to complete </span> 
-                         </div>
-                         <div class="col-md-4 text-center">
-                                   Access control: 
-                                   <access-control :type.sync="survey.access"></access-control>
-                         </div>
-                      </div>
-<div class="row" v-show="advanced_setting&&(survey.access==1)" transition="fade">
-    <div class="col-md-3 col-md-offset-6">
-        <input type="text" class="form-control" v-model="survey.security_question" placeholder="Security Question">
-    </div>
-    <div class="col-md-3">
-                <input type="text" class="form-control" v-model="survey.security_answer" placeholder="Security Answer">
+    <hr>
+    <div class="row" v-show="advanced_setting" transition="expand">
 
-    </div>
-</div>
+        <div class="col-md-3 text-center">
+            <label for="">
+                Start Date
+            </label>
+            <datepicker :value.sync="survey.start_at" width="120px" :disabled-days-of-week="disabled"
+                        format="dd/MM/yyyy">
+            </datepicker>
+        </div>
 
-                      <hr v-show="advanced_setting">
+        <div class="col-md-3 text-center">
+            <label for="">
+                End Date
+            </label>
+            <datepicker :value.sync="survey.end_at" width="120px" :disabled-days-of-week="disabled" format="dd/MM/yyyy">
+            </datepicker>
+        </div>
+
+        <div class="col-md-2 text-center">
+            <span :class="{'text-danger':period<=0}" id="days"> {{period}} days to complete </span>
+        </div>
+        <div class="col-md-4 text-center">
+            Access control:
+            <access-control :type.sync="survey.access"></access-control>
+        </div>
+    </div>
+    <div class="row" v-show="advanced_setting&&(survey.access==1)" transition="fade">
+        <div class="col-md-3 col-md-offset-6">
+            <input type="text" class="form-control" v-model="survey.security_question" placeholder="Security Question">
+        </div>
+        <div class="col-md-3">
+            <input type="text" class="form-control" v-model="survey.security_answer" placeholder="Security Answer">
+
+        </div>
+    </div>
+
+    <hr v-show="advanced_setting">
     <div class="row">
         <div class="col-md-3">
             <ul class="nav nav-pills nav-stacked">
@@ -107,42 +109,50 @@
                     <div class="col-md-12 text-left">
 
                         <div :class="{'focused':inputFocus==$index}" class="panel question panel-primary"
-                             v-drag-and-drop drop="handleDrop" id="{{ $index }}">
+                             v-drag-and-drop drop="handleDrop" @dragover="drag_over=$index" @dragleave="drag_over=-1"  id="{{ $index }}">
 
                             <div class="panel-body">
-                                <span class="text-muted small" style="position:absolute;top:10px;font-size:9px;left:30px;"> #{{$index+1}} </span>
+                                <span class="text-muted small"
+                                      style="position:absolute;top:10px;font-size:9px;left:30px;"> #{{$index+1}} </span>
 
-                               <div class="row">
+                                <div class="row">
                                     <div class="col-md-12">
 
                                          <textarea @focus='inputFocus=$index' @blur="inputFocus=-100" type="text"
                                                    name="{{'question-'+$index}}" class="form-control question-control"
                                                    v-model="question.description"> 
                                          </textarea>
-                                         
+
+                                    </div>
                                 </div>
-                               </div>
-                               <div class="row" v-show="question.type=='Selection'">
-                                   <div class="col-md-8">
-                                            <div class="row " v-for="option in question.options" transition="fade" track-by="$index" style="margin-top:5px;">
-                                                <div class="col-md-11" >
-                                                   <input type="text" class="form-control options"  v-model="option" placeholder="Option">
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <i class="fa fa-remove" style="margin-top:1em;cursor:pointer" @click="question.options.$remove(option)"></i>
-                                                </div>
+                                <div class="row" v-show="question.type=='Selection'">
+                                    <div class="col-md-8">
+                                        <div class="row " v-for="option in question.options" transition="fade"
+                                             track-by="$index" style="margin-top:5px;">
+                                            <div class="col-md-11">
+                                                <input type="text" class="form-control options" v-model="option"
+                                                       placeholder="Option">
                                             </div>
-                                            
-                                            <div class="row" style="margin-top:10px;">
-                                                <div class="col-md-12">
-                                                    <input type="text" class="form-control newoption" placeholder="Add new option" @keyup.enter="addOption(question, $event)" @blur="addOption(question, $event)" >
-                                                </div>
+                                            <div class="col-md-1">
+                                                <i class="fa fa-remove" style="margin-top:1em;cursor:pointer"
+                                                   @click="question.options.$remove(option)"></i>
                                             </div>
-                                   </div>
-                                   <div class="col-md-4">
-                                                     <label>Multiple Choice</label> <input style="font-size:4em;" type="checkbox" v-model="question.multiple"  >
-                                   </div>
-                               </div>
+                                        </div>
+
+                                        <div class="row" style="margin-top:10px;">
+                                            <div class="col-md-12">
+                                                <input type="text" class="form-control newoption"
+                                                       placeholder="Add new option"
+                                                       @keyup.enter="addOption(question, $event)"
+                                                       @blur="addOption(question, $event)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Multiple Choice</label> <input style="font-size:4em;" type="checkbox"
+                                                                              v-model="question.multiple">
+                                    </div>
+                                </div>
 
                             </div>
                             <div class="panel-footer text-right">
@@ -158,8 +168,10 @@
                                 </button>
 
                             </div>
+                            <div transition="fade" v-show="drag_over==$index" style="float:left;border:dashed 1px yellow;padding:30px; margin-top:10px;width:100%;">This question will goes here</div>
                         </div>
                     </div>
+
                 </div>
                 <div style="margin-top:40px;">
                     <add-question :callback="focusLastQuestion" :section.sync="currentSection"></add-question>
@@ -249,30 +261,31 @@
                         self.$dispatch('loading', 'Creating')
 
                         SurveyResource.save(self.survey).then((res) => {
-                            self.$dispatch('loaded')
-                            swal({
-                                title: "Survey Created!",
-                                text: `<img src="http://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=https://149.144.133.136:8888/${res.data.slug}"&chld=H|0"> <br> Survey URL: <input type="text" style="display:initial" class="form-class input-sm" value="http://www.hrv.dev:8888/${res.data.slug}" readonly>`,
-                                type: 'success',
-                                html: true,
-                                cancelButtonText: 'Close',
-                                showCancelButton: true,
-                                confirmButtonText: "Send via Email",
-                            });
-                        }, (errRes) => {
-                            self.$dispatch('loaded')
-                            swal({
-                                title: "Ops",
-                                text: 'Something wrong with your request, please try again later..',
-                                type: 'warning',
-                                html: true,
+                                self.$dispatch('loaded')
+                                swal({
+                                    title: "Survey Created!",
+                                    text: `<img src="http://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=https://149.144.133.136:8888/${res.data.slug}"&chld=H|0"> <br> Survey URL: <input type="text" style="display:initial" class="form-class input-sm" value="http://www.hrv.dev:8888/${res.data.slug}" readonly>`,
+                                    type: 'success',
+                                    html: true,
+                                    cancelButtonText: 'Close',
+                                    showCancelButton: true,
+                                    confirmButtonText: "Send via Email",
+                                });
+                            },
+                            (errRes) => {
+                                self.$dispatch('loaded')
+                                swal({
+                                    title: "Ops",
+                                    text: 'Something wrong with your request, please try again later..',
+                                    type: 'warning',
+                                    html: true,
 
-                            });
+                                });
 
-                        })
+                            }
+                        )
 
                     });
-
 
 
                 },
@@ -286,7 +299,6 @@
                     this.currentSection.questions.splice(index, 0, dummy)
 
                     this.focusOnQuestion(index + 1)
-
 
 
                 },
@@ -304,18 +316,9 @@
                     var first = this.findUpId(itemOne)
                     var second = this.findUpId(itemTwo)
 
-                    console.log(first)
-                    console.log(second)
 
-                    var questionOne = Object.assign({}, this.currentSection.questions[first]);
-                    var questionTwo = Object.assign({}, this.currentSection.questions[second]);
-                    console.log(questionOne)
-                    console.log(questionTwo)
-
-
-                    this.currentSection.questions.$set(parseInt(first), questionTwo);
-                    this.currentSection.questions.$set(parseInt(second), questionOne);
-
+                    this.currentSection.questions = this.currentSection.questions.move(first, second);
+                    this.drag_over = -1
 
 
                 },
@@ -383,6 +386,7 @@
             },
             data() {
                 return {
+                    drag_over: -1,
                     advanced_setting: false,
                     currentSection: {
                         name: ''
