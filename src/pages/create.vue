@@ -212,281 +212,285 @@
 
     export default {
         ready() {
-                this.reset()
-                $("#sticky-area").sticky({
-                    topSpacing: 0,
-                    zIndex: 99999
+            this.reset()
+            $("#sticky-area").sticky({
+                topSpacing: 0,
+                zIndex: 99999
+            });
+
+            $('#survey-name').focus()
+
+        },
+        components: {
+
+            addQuestion,
+            sectionName,
+            questionType,
+            datepicker,
+            accessControl
+
+        },
+        methods: {
+            addOption(question, event) {
+                var newOption = event.target.value
+                if (!newOption) {
+                    return
+                }
+                if (!question.options) {
+                    question.options = []
+                }
+                if (question.options.indexOf(newOption) >= 0) {
+                    return
+                }
+
+                question.options.push(newOption)
+                event.target.value = ''
+            },
+            saveSurvey() {
+                var self = this
+                swal({
+                    title: "Are you sure?",
+                    text: "Have you completed your survey?",
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    cancelButtonText: 'No',
+                    confirmButtonText: "Yes, save it!",
+                    closeOnConfirm: true
+                }, function() {
+                    self.$dispatch('loading', 'Creating')
+
+                    SurveyResource.save(self.survey).then((res) => {
+                            self.$dispatch('loaded')
+                            swal({
+                                title: "Survey Created!",
+                                text: `<img src="http://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=http://hr.man.land/${res.data.slug}"&chld=H|0"> <br> Survey URL: <input type="text" style="display:initial" class="form-class input-sm" value="http://hr.man.land/${res.data.slug}" readonly>`,
+                                type: 'success',
+                                html: true,
+                                cancelButtonText: 'Ok',
+                                showCancelButton: true,
+                                confirmButtonText: "Back",
+                            }, function() {
+                                self.$route.router.go('/app/survey')
+                            })
+
+                        },
+                        (errRes) => {
+                            self.$dispatch('loaded')
+                            swal({
+                                title: "Ops",
+                                text: 'Something wrong with your request, please try again later..',
+                                type: 'warning',
+                                html: true,
+
+                            });
+
+                        }
+                    )
+
                 });
 
-                $('#survey-name').focus()
 
             },
-            components: {
+            focusLastQuestion() {
+                this.focusOnQuestion(this.currentSection.questions.length - 1)
+            },
+            duplicateQuestion(index) {
+                var dummy = Object.assign({}, this.currentSection.questions[index])
 
-                addQuestion,
-                sectionName,
-                questionType,
-                datepicker,
-                accessControl
+                dummy.options = Object.assign({}, this.currentSection.questions[index].options)
+                this.currentSection.questions.splice(index, 0, dummy)
+
+                this.focusOnQuestion(index + 1)
+
 
             },
-            methods: {
-                addOption(question, event) {
-                    var newOption = event.target.value
-                    if (!newOption) {
-                        return
-                    }
-                    if (!question.options) {
-                        question.options = []
-                    }
-                    if (question.options.indexOf(newOption) >= 0) {
-                        return
-                    }
+            focusOnQuestion(index) {
 
-                    question.options.push(newOption)
-                    event.target.value = ''
-                },
-                saveSurvey() {
-                    var self = this
-                    swal({
-                        title: "Are you sure?",
-                        text: "Have you completed your survey?",
-                        type: "info",
-                        showCancelButton: true,
-                        confirmButtonColor: "#DD6B55",
-                        cancelButtonText: 'No',
-                        confirmButtonText: "Yes, save it!",
-                        closeOnConfirm: true
-                    }, function() {
-                        self.$dispatch('loading', 'Creating')
+                this.$nextTick(function() {
+                    $("textarea[name='question-" + index + "']").focus()
 
-                        SurveyResource.save(self.survey).then((res) => {
-                                self.$dispatch('loaded')
-                                swal({
-                                    title: "Survey Created!",
-                                    text: `<img src="http://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=https://149.144.133.136:8888/${res.data.slug}"&chld=H|0"> <br> Survey URL: <input type="text" style="display:initial" class="form-class input-sm" value="http://www.hrv.dev:8888/${res.data.slug}" readonly>`,
-                                    type: 'success',
-                                    html: true,
-                                    cancelButtonText: 'Close',
-                                    showCancelButton: true,
-                                    confirmButtonText: "Send via Email",
-                                });
-                            },
-                            (errRes) => {
-                                self.$dispatch('loaded')
-                                swal({
-                                    title: "Ops",
-                                    text: 'Something wrong with your request, please try again later..',
-                                    type: 'warning',
-                                    html: true,
-
-                                });
-
-                            }
-                        )
-
-                    });
-
-
-                },
-                focusLastQuestion() {
-                    this.focusOnQuestion(this.currentSection.questions.length - 1)
-                },
-                duplicateQuestion(index) {
-                    var dummy = Object.assign({}, this.currentSection.questions[index])
-
-                    dummy.options = Object.assign({}, this.currentSection.questions[index].options)
-                    this.currentSection.questions.splice(index, 0, dummy)
-
-                    this.focusOnQuestion(index + 1)
-
-
-                },
-                focusOnQuestion(index) {
-
-                    this.$nextTick(function() {
-                        $("textarea[name='question-" + index + "']").focus()
-
-                    })
-                },
-                deleteQuestion(question) {
-                    this.currentSection.questions.$remove(question)
-                },
-                handleDrop(itemOne, itemTwo) {
-                    var first = this.findUpId(itemOne)
-                    var second = this.findUpId(itemTwo)
-
-
-                    this.currentSection.questions = this.currentSection.questions.move(first, second);
-                    this.drag_over = -1
-
-
-                },
-                findUpId(el, id) {
-                    if (el.id) {
-                        return el.id;
-                    }
-                    while (el.parentNode) {
-                        el = el.parentNode;
-                        if (el.id)
-                            return el.id;
-                    }
-                    return null;
-                },
-                reset() {
-                    this.mouseHover = -100
-                    this.inputFocus = -1
-                    this.currentSection = this.survey.sections.length > 1 ? this.survey.sections[0] : null
-                },
-                removeSection(section) {
-                    this.survey.sections.$remove(section)
-                    this.reset()
-                },
-                addSection() {
-                    var self = this
-                    swal({
-                        title: "New section",
-                        text: "Title of new section:",
-                        type: "input",
-                        showCancelButton: true,
-                        closeOnConfirm: false,
-                        animation: "pop",
-                        inputPlaceholder: "Write something"
-                    }, function(inputValue) {
-                        if (inputValue === false) return false;
-                        if (inputValue === "") {
-                            swal.showInputError("You need to write the title!");
-                            return false
-                        }
-                        var newSection = {
-                            'name': inputValue,
-                            'questions': []
-                        }
-                        self.survey.sections.push(newSection)
-                        self.currentSection = newSection
-                        swal("Nice!", "You have added new section: " + inputValue, "success");
-                    });
-                },
+                })
             },
-            computed: {
-                period: function() {
-                    $('#days').fadeOut(100, function() {
-                        $('#days').fadeIn()
-                    })
+            deleteQuestion(question) {
+                this.currentSection.questions.$remove(question)
+            },
+            handleDrop(itemOne, itemTwo) {
+                var first = this.findUpId(itemOne)
+                var second = this.findUpId(itemTwo)
 
-                    var date1 = new Date(this.survey.start_at.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3"));
-                    var date2 = new Date(this.survey.end_at.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3"));
 
-                    var diff = date2.getTime() - date1.getTime();
+                this.currentSection.questions = this.currentSection.questions.move(first, second);
+                this.drag_over = -1
 
-                    var days = Math.floor(diff / (1000 * 60 * 60 * 24))
-                    return days
 
+            },
+            findUpId(el, id) {
+                if (el.id) {
+                    return el.id;
                 }
+                while (el.parentNode) {
+                    el = el.parentNode;
+                    if (el.id)
+                        return el.id;
+                }
+                return null;
             },
-            data() {
-                return {
-                    drag_over: -1,
-                    advanced_setting: false,
-                    currentSection: {
-                        name: ''
-                    },
-                    adding: false,
-                    inputFocus: -1,
-                    mouseHover: -100,
-                    survey: {
-                        access: 0,
-                        name: 'My Survey',
-                        start_at: '1/1/2016',
-                        end_at: '1/1/2017',
-                        sections: [{
-                            'name': 'Value exploration: Strategy',
-                            'questions': [{
-                                    'description': 'The baord is heavily involved in formulating strategy',
-                                    'type': 'TrueFalse',
-                                    'options': [],
-                                    'multiple': false
-                                }, {
-                                    'description': 'The board monitors strategy execution or implementation against pre determinded milestones, strategic plan and other businessplan',
-                                    'type': 'TrueFalse',
-                                    'options': [],
-                                    'multiple': false
-                                }, {
-                                    'description': 'THe board takes decisions considering the community, employees, society as a whole and the environment',
-                                    'type': 'Slider',
-                                    'options': [],
-                                    'multiple': false
-                                }
-
-                            ]
-                        }, {
-                            'name': 'Value exploration: Risk Management and Financial Measurement',
-                            'questions': [],
-                            'questions': []
-                        }, {
-                            'name': 'Value exploration: Capital raising and allocation',
-                            'questions': []
-                        }, {
-                            'name': 'Value exploration: Compliance and communication',
-                            'questions': []
-                        }, {
-                            'name': 'Value exploration: Succession Planning',
-                            'questions': []
-                        }, {
-                            'name': 'Value exploration: Remuneration',
-                            'questions': []
-                        }, {
-                            'name': 'Dynamic Review Question: External and internal',
-                            'questions': []
-                        }, {
-                            'name': 'Dynamic Review Question: communication and Engagement with management team',
-                            'questions': []
-                        }, {
-                            'name': 'Dynamic Review Question: Board structure and membership',
-                            'questions': []
-                        }, {
-                            'name': 'Dynamic Review Question: Ownership within the Board',
-                            'questions': []
-                        }, {
-                            'name': 'Dynamic Review Question: Alignment of Board and Board members',
-                            'questions': []
-                        }, {
-                            'name': 'Dynamic Review Question: Board efficiency',
-                            'questions': []
-                        }, {
-                            'name': 'Strategy',
-                            'questions': []
-                        }, {
-                            'name': 'Risk Management',
-                            'questions': []
-                        }, {
-                            'name': 'Capital allocation or investment',
-                            'questions': []
-                        }, {
-                            'name': 'Reporting or compliance',
-                            'questions': []
-                        }, {
-                            'name': 'Recruitment',
-                            'questions': []
-                        }, {
-                            'name': 'Remuneration',
-                            'questions': []
-                        }, {
-                            'name': 'Communication',
-                            'questions': []
-                        }, {
-                            'name': 'Board Dynamics',
-                            'questions': []
-                        }, {
-                            'name': 'Performance Evaluation',
-                            'questions': []
-                        }, {
-                            'name': 'Constraint',
-                            'questions': []
-                        }]
+            reset() {
+                this.mouseHover = -100
+                this.inputFocus = -1
+                this.currentSection = this.survey.sections.length > 1 ? this.survey.sections[0] : null
+            },
+            removeSection(section) {
+                this.survey.sections.$remove(section)
+                this.reset()
+            },
+            addSection() {
+                var self = this
+                swal({
+                    title: "New section",
+                    text: "Title of new section:",
+                    type: "input",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    animation: "pop",
+                    inputPlaceholder: "Write something"
+                }, function(inputValue) {
+                    if (inputValue === false) return false;
+                    if (inputValue === "") {
+                        swal.showInputError("You need to write the title!");
+                        return false
                     }
+                    var newSection = {
+                        'name': inputValue,
+                        'questions': []
+                    }
+                    self.survey.sections.push(newSection)
+                    self.currentSection = newSection
+                    swal("Nice!", "You have added new section: " + inputValue, "success");
+                });
+            },
+        },
+        computed: {
+            period: function() {
+                $('#days').fadeOut(100, function() {
+                    $('#days').fadeIn()
+                })
+
+                var date1 = new Date(this.survey.start_at.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3"));
+                var date2 = new Date(this.survey.end_at.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3"));
+
+                var diff = date2.getTime() - date1.getTime();
+
+                var days = Math.floor(diff / (1000 * 60 * 60 * 24))
+                return days
+
+            }
+        },
+        data() {
+            return {
+                drag_over: -1,
+                advanced_setting: false,
+                currentSection: {
+                    name: ''
+                },
+                sending: false,
+                adding: false,
+                inputFocus: -1,
+                mouseHover: -100,
+                survey: {
+                    access: 0,
+                    name: 'My Survey',
+                    start_at: '1/1/2016',
+                    end_at: '1/1/2017',
+                    sections: [{
+                        'name': 'Value exploration: Strategy',
+                        'questions': [{
+                                'description': 'The baord is heavily involved in formulating strategy',
+                                'type': 'TrueFalse',
+                                'options': [],
+                                'multiple': false
+                            }, {
+                                'description': 'The board monitors strategy execution or implementation against pre determinded milestones, strategic plan and other businessplan',
+                                'type': 'TrueFalse',
+                                'options': [],
+                                'multiple': false
+                            }, {
+                                'description': 'THe board takes decisions considering the community, employees, society as a whole and the environment',
+                                'type': 'Slider',
+                                'options': [],
+                                'multiple': false
+                            }
+
+                        ]
+                    }, {
+                        'name': 'Value exploration: Risk Management and Financial Measurement',
+                        'questions': [],
+                        'questions': []
+                    }, {
+                        'name': 'Value exploration: Capital raising and allocation',
+                        'questions': []
+                    }, {
+                        'name': 'Value exploration: Compliance and communication',
+                        'questions': []
+                    }, {
+                        'name': 'Value exploration: Succession Planning',
+                        'questions': []
+                    }, {
+                        'name': 'Value exploration: Remuneration',
+                        'questions': []
+                    }, {
+                        'name': 'Dynamic Review Question: External and internal',
+                        'questions': []
+                    }, {
+                        'name': 'Dynamic Review Question: communication and Engagement with management team',
+                        'questions': []
+                    }, {
+                        'name': 'Dynamic Review Question: Board structure and membership',
+                        'questions': []
+                    }, {
+                        'name': 'Dynamic Review Question: Ownership within the Board',
+                        'questions': []
+                    }, {
+                        'name': 'Dynamic Review Question: Alignment of Board and Board members',
+                        'questions': []
+                    }, {
+                        'name': 'Dynamic Review Question: Board efficiency',
+                        'questions': []
+                    }, {
+                        'name': 'Strategy',
+                        'questions': []
+                    }, {
+                        'name': 'Risk Management',
+                        'questions': []
+                    }, {
+                        'name': 'Capital allocation or investment',
+                        'questions': []
+                    }, {
+                        'name': 'Reporting or compliance',
+                        'questions': []
+                    }, {
+                        'name': 'Recruitment',
+                        'questions': []
+                    }, {
+                        'name': 'Remuneration',
+                        'questions': []
+                    }, {
+                        'name': 'Communication',
+                        'questions': []
+                    }, {
+                        'name': 'Board Dynamics',
+                        'questions': []
+                    }, {
+                        'name': 'Performance Evaluation',
+                        'questions': []
+                    }, {
+                        'name': 'Constraint',
+                        'questions': []
+                    }]
                 }
             }
+        }
 
     }
 </script>

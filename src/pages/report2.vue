@@ -26,7 +26,7 @@
             </ul>
 
         </div>
-         <div v-show="currentSection" class="col-md-9">
+         <div v-show="!section[currentSection].name" class="col-md-9">
              <p>Please select a section on the left to view</p>
          </div>
          <div class="col-md-9">

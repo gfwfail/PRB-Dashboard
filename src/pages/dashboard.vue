@@ -21,7 +21,7 @@
 
                                <div class="panel-body">
 
-                        <button class="btn btn-block btn-success">Create Survey</button>
+                        <button v-link="{'path':'/app/survey/create'}" class="btn btn-block btn-success">Create Survey</button>
                  <button class="btn btn-block btn-primary">Add Contact</button>
                  <hr>
                                          <button class="btn btn-block btn-danger">Need Help?</button>
@@ -38,43 +38,43 @@
 <script>
     export default {
         data() {
-                return {
-                    chartdata: [{
-                        genre: 'Email',
-                        sold: 275
-                    }, {
-                        genre: 'QRCode',
-                        sold: 115
-                    }, {
-                        genre: 'URL',
-                        sold: 120
-                    }, {
-                        genre: 'Other',
-                        sold: 150
-                    }, ]
-                }
-            },
-            ready() {
-                var chart = new G2.Chart({
-                    id: 'c1', // 指定图表容器 ID
-                    width: 600, // 指定图表宽度
-                    height: 300, // 指定图表高度
-                    fontFamily: 'Open Sans'
-                });
-                // Step 2: 载入数据源
-                chart.source(this.chartdata, {
-                    genre: {
-                        alias: 'Type' // 列定义，定义该属性显示的别名
-                    },
-                    sold: {
-                        alias: 'Done'
-                    }
-                });
-                // Step 3：创建图形语法，绘制柱状图，由 genre 和 sold 两个属性决定图形位置，genre 映射至 x 轴，sold 映射至 y 轴
-                chart.interval().position('genre*sold').color('genre')
-                    // Step 4: 渲染图表
-                chart.render();
+            return {
+                chartdata: [{
+                    genre: 'Email',
+                    sold: 275
+                }, {
+                    genre: 'QRCode',
+                    sold: 115
+                }, {
+                    genre: 'URL',
+                    sold: 120
+                }, {
+                    genre: 'Other',
+                    sold: 150
+                }, ]
             }
+        },
+        ready() {
+            var chart = new G2.Chart({
+                id: 'c1', // 指定图表容器 ID
+                width: 600, // 指定图表宽度
+                height: 300, // 指定图表高度
+                fontFamily: 'Open Sans'
+            });
+            // Step 2: 载入数据源
+            chart.source(this.chartdata, {
+                genre: {
+                    alias: 'Type' // 列定义，定义该属性显示的别名
+                },
+                sold: {
+                    alias: 'Done'
+                }
+            });
+            // Step 3：创建图形语法，绘制柱状图，由 genre 和 sold 两个属性决定图形位置，genre 映射至 x 轴，sold 映射至 y 轴
+            chart.interval().position('genre*sold').color('genre')
+                // Step 4: 渲染图表
+            chart.render();
+        }
 
     }
 </script>

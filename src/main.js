@@ -39,9 +39,8 @@ window.G2 = G2
 var Chart = require('chart.js')
 window.Chart = Chart
 require('script!../node_modules/sweetalert/dist/sweetalert.min.js')
-require('script!../node_modules/jquery/jquery.min.js')
+require('script!../node_modules/jquery/dist/jquery.min.js')
 require('script!../node_modules/jquery-sticky/jquery.sticky.js')
-
 
 
 
